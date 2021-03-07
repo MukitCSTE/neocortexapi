@@ -258,7 +258,7 @@ namespace UnitTestsProject.CortexNetworkTests
             {
                 matches = 0;
 
-                cycle++;
+                cycle = i;
 
                 Debug.WriteLine($"-------------- L4 TM Train region Cycle {cycle} ---------------");
 
