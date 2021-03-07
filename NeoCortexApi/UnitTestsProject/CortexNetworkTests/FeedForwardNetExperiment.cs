@@ -209,7 +209,7 @@ namespace UnitTestsProject.CortexNetworkTests
                             /// </summary>
 
                             //InitArray(inpCellsL4ToL2, 0);
-                            // if (isSP1Stable)
+                            // if (isSP4Stable)
                             //{
                             // var cellSdrL4Indexes = memL4.ActiveCells.Select(c => c.Index).ToArray();
 
@@ -238,7 +238,7 @@ namespace UnitTestsProject.CortexNetworkTests
 
                         }
 
-                        //if (isSP1Stable && isSP2STable)
+                        //if (isSP4Stable && isSP2STable)
                         // break;
 
                         if (isSP4Stable)
