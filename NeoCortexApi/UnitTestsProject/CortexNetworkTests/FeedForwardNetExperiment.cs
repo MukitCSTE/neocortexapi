@@ -202,8 +202,8 @@ namespace UnitTestsProject.CortexNetworkTests
                             var lyrOut = layerL4.Compute(input, learn);
 
                             /// <summary>
-                            /// This part is for to make SP of Layer2 stable thourgh help of HPC.  
-                            /// We skip this part right now to check how it works at uppler layer 2 without stability
+                            /// This part is for to make SP of Layer2 stable thourgh help of HPC Boosting from new born stage.  
+                            /// We skip this part right now to check how it works at uppler layer 2 without achieving stability
                             /// but if you want experiment this just
                             /// uncomment the code part area from Line 212 to 231 and 236 to 237
                             /// & then comment out Line 238 to 239
