@@ -241,10 +241,7 @@ namespace UnitTestsProject.CortexNetworkTests
                 }
             }
 
-            Debug.WriteLine($"-------------- L4 SP region is  {isSP4Stable} ---------------");
-
-            //layerL4.HtmModules.Add("tm", tm4);
-
+         
 
             // SP+TM at L4
 
