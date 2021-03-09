@@ -28,14 +28,13 @@ namespace UnitTestsProject.CortexNetworkTests
 
         TemporalMemory tm4, tm2;
 
-
         [TestMethod]
         public void FeedForwardNetTest()
         {
             int cellsPerColumnL4 = 20;
             int numColumnsL4 = 1024;
 
-            int cellsPerColumnL2 = 10;
+            int cellsPerColumnL2 = 40;
             int numColumnsL2 = 150;
 
             int inputBits = 100;
@@ -74,7 +73,7 @@ namespace UnitTestsProject.CortexNetworkTests
                 GlobalInhibition = true,
                 LocalAreaDensity = -1,
                 NumActiveColumnsPerInhArea = 0.5 * numColumnsL2,
-                PotentialRadius =  inputsL2, // Every columns 
+                PotentialRadius = inputsL2, // Every columns 
                 InhibitionRadius = 15,
                 MaxBoost = maxBoost,
                 DutyCyclePeriod = 25,
@@ -192,51 +191,52 @@ namespace UnitTestsProject.CortexNetworkTests
                     for (int i = 0; i < maxCycles; i++)
                     {
                         matches = 0;
-                        cycle=i;
+                        cycle = i;
                         Debug.WriteLine($"-------------- Newborn Cycle {cycle} at L4 SP region  ---------------");
 
                         foreach (var input in inputs)
                         {
                             Debug.WriteLine($" INPUT: '{input}'\tCycle:{cycle}");
                             Debug.Write("L4: ");
-                            var lyrOut = layerL4.Compute(input, learn);
+                            //L4 SP pre train
+                            layerL4.Compute(input, learn);
+                            InitArray(inpCellsL4ToL2, 0);
 
-                            /// <summary>
-                            /// This part is for to make SP of Layer2 stable thourgh help of HPC Boosting from new born stage.  
-                            /// We skip this part right now to check how it works at uppler layer 2 without achieving stability
-                            /// but if you want experiment this just
-                            /// uncomment the code part area from Line 212 to 231 and 236 to 237
-                            /// & then comment out Line 238 to 239
-                            /// </summary>
+                            if (isSP4Stable)
+                            {
+                              var cellSdrL4Indexes = memL4.ActiveCells.Select(c => c.Index).ToArray();
+                              // Write SDR as output of L4 and input of L2
+                              swL4Sdrs.WriteLine($"{input} - {Helpers.StringifyVector(cellSdrL4Indexes)}");
+                              // Set the output active cell array
+                              ArrayUtils.SetIndexesTo(inpCellsL4ToL2, cellSdrL4Indexes, 1);
+                              Debug.WriteLine($"L4 out sdr: {Helpers.StringifyVector(cellSdrL4Indexes)}");
+                              Debug.WriteLine("L2: ");
+                              swL2.Restart();
 
-                            //InitArray(inpCellsL4ToL2, 0);
-                            // if (isSP4Stable)
-                            //{
-                            // var cellSdrL4Indexes = memL4.ActiveCells.Select(c => c.Index).ToArray();
-                            /// Write SDR as output of L4 and input of L2
-                            // swL4Sdrs.WriteLine($"{input} - {Helpers.StringifyVector(cellSdrL4Indexes)}");
-                            // Set the output active cell array
-                            // ArrayUtils.SetIndexesTo(inpCellsL4ToL2, cellSdrL4Indexes, 1);
-                            // Debug.WriteLine($"L4 out sdr: {Helpers.StringifyVector(cellSdrL4Indexes)}");
-                            // Debug.WriteLine("L2: ");
-                            // swL2.Restart();
-                            // layerL2.Compute(inpCellsL4ToL2, true);
-                            // swL2.Stop();
-                            // Debug.WriteLine($"{swL2.ElapsedMilliseconds / 1000}");
-                            // sw.WriteLine($"{swL2.ElapsedMilliseconds / 1000}");
-                            // sw.Flush();
-                            // var overlaps = ArrayUtils.IndexWhere(memL2.Overlaps, o => o > 0);
-                            // var strOverlaps = Helpers.StringifyVector(overlaps);
-                            // Debug.WriteLine($"Potential columns: {overlaps.Length}, overlaps: {strOverlaps}");
-                            //}
+                              /// <summary>
+                              /// This part is for to make SP of Layer2 stable thourgh help 
+                              /// of HPC Boosting Algo from new born stage.  
+                              /// </summary>
+                             
+                              layerL2.Compute(inpCellsL4ToL2, true);
+              
+                              swL2.Stop();
+                              Debug.WriteLine($"{swL2.ElapsedMilliseconds / 1000}");
+                              sw.WriteLine($"{swL2.ElapsedMilliseconds / 1000}");
+                              sw.Flush();
+
+                              var overlaps = ArrayUtils.IndexWhere(memL2.Overlaps, o => o > 0);
+                              var strOverlaps = Helpers.StringifyVector(overlaps);
+                              Debug.WriteLine($"Potential columns: {overlaps.Length}, overlaps: {strOverlaps}");
+                             }
 
 
                         }
 
-                        //if (isSP4Stable && isSP2STable)
-                        // break;
-                        if (isSP4Stable)
-                            break;
+                        if (isSP4Stable && isSP2STable)
+                         break;
+
+                        
                     }
                 }
             }
@@ -283,7 +283,7 @@ namespace UnitTestsProject.CortexNetworkTests
                         // Set the output active cell array
                         ArrayUtils.SetIndexesTo(inpCellsL4ToL2, cellSdrL4Indexes, 1);
                         var layerL2Out = layerL2.Compute(inpCellsL4ToL2, true) as ComputeCycle;
-                        var overlaps = ArrayUtils.IndexWhere(memL2.Overlaps, o => o > 0);
+                        int[] overlaps = ArrayUtils.IndexWhere(memL2.Overlaps, o => o > 0);
                         var strOverlaps = Helpers.StringifyVector(overlaps);
                         Debug.WriteLine($"Potential columns: {overlaps.Length}, overlaps: {strOverlaps}");
 
