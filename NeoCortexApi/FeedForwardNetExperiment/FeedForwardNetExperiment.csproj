@@ -8,10 +8,7 @@
 
 	<ItemGroup>
 		
-		<ProjectReference Include="..\NeoCortexApi\NeoCortexApi.csproj" />
-		<ProjectReference Include="..\NeoCortexArrayLib\NeoCortexArrayLib.csproj" />
-		<ProjectReference Include="..\NeoCortexEntities\NeoCortexEntities.csproj" />
-		<ProjectReference Include="..\NeoCortexUtils\NeoCortexUtils.csproj" />
+		 <PackageReference Include="NeoCortexApi" Version="1.0.15" />
 		
 	</ItemGroup>
 
